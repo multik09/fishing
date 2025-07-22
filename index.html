@@ -27,9 +27,9 @@
 
       createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],
-        dataUrl: "Build/fishing.data.unityweb",
-        frameworkUrl: "Build/fishing.framework.js.unityweb",
-        codeUrl: "Build/fishing.wasm.unityweb",
+        dataUrl: "Build/fishing.data",
+        frameworkUrl: "Build/fishing.framework.js",
+        codeUrl: "Build/fishing.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Catch Glory",
@@ -39,13 +39,15 @@
       });
     </script>
     <script>
-    window.addEventListener('load', function() {
-    if (window.Telegram && window.Telegram.WebApp) {
-      window.Telegram.WebApp.ready();
-      // Здесь можно добавить другие команды, например, развернуть окно на весь экран
-      window.Telegram.WebApp.expand(); 
-    }
-    });
+      window.addEventListener('load', function() {
+        if (window.Telegram && window.Telegram.WebApp) {
+          // Даем небольшую задержку (100 миллисекунд), чтобы iOS точно был готов
+          setTimeout(function() {
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand();
+          }, 100);
+        }
+      });
     </script>
   </body>
 </html>
