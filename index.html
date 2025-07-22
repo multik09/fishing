@@ -42,8 +42,11 @@
     <script>
       window.addEventListener('load', function() {
         if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.ready();
-          window.Telegram.WebApp.expand();
+          // Даем небольшую задержку (100 миллисекунд), чтобы iOS точно был готов
+          setTimeout(function() {
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand();
+          }, 100);
         }
       });
     </script>
