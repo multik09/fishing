@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity Web Player | Catch Glory</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
     <canvas id="unity-canvas" width=1000 height=1000 tabindex="-1" style="width: 1000px; height: 1000px; background: #231F20"></canvas>
@@ -39,15 +39,13 @@
       });
     </script>
     <script>
-      window.addEventListener('load', function() {
-        if (window.Telegram && window.Telegram.WebApp) {
-          // Даем небольшую задержку (100 миллисекунд), чтобы iOS точно был готов
-          setTimeout(function() {
-            Telegram.WebApp.ready();
-            Telegram.WebApp.expand();
-          }, 100);
-        }
-      });
+    window.addEventListener('load', function() {
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      // Здесь можно добавить другие команды, например, развернуть окно на весь экран
+      window.Telegram.WebApp.expand(); 
+    }
+    });
     </script>
   </body>
 </html>
