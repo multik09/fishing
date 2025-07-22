@@ -38,18 +38,12 @@
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
       });
     </script>
-    
+
     <script>
       window.addEventListener('load', function() {
-        // Проверяем, что мы внутри Телеграма
         if (window.Telegram && window.Telegram.WebApp) {
-          
-          // Сообщаем, что приложение готово
           window.Telegram.WebApp.ready();
-
-          // А теперь просим его расшириться на весь экран
           window.Telegram.WebApp.expand();
-          
         }
       });
     </script>
