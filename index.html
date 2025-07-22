@@ -3,20 +3,36 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- 
+      Важно: Мы оставим базовый viewport здесь, но скрипт ниже его заменит 
+      на более продвинутый для мобильных устройств.
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unity Web Player | Catch Glory</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
     <canvas id="unity-canvas" width=1000 height=1000 tabindex="-1" style="width: 1000px; height: 1000px; background: #231F20"></canvas>
+    
     <script src="Build/fishing.loader.js"></script>
+    
     <script>
+      // Этот скрипт обнаруживает мобильные устройства
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
+        
+        // Удаляем старый viewport, если он есть
+        var oldMeta = document.querySelector('meta[name="viewport"]');
+        if (oldMeta) {
+          oldMeta.parentNode.removeChild(oldMeta);
+        }
+
+        // Создаем новый, правильный мета-тег для мобильных
         var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        meta.name = "viewport";
+        // Вот самая важная строчка с 'viewport-fit=cover'
+        meta.content = "width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
         document.getElementsByTagName('head')[0].appendChild(meta);
 
+        // Растягиваем canvas на весь экран
         var canvas = document.querySelector("#unity-canvas");
         canvas.style.width = "100%";
         canvas.style.height = "100%";
@@ -25,27 +41,32 @@
         document.body.style.textAlign = "left";
       }
 
+      // Этот блок запускает твою игру
       createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],
-        dataUrl: "Build/fishing.data",
-        frameworkUrl: "Build/fishing.framework.js",
-        codeUrl: "Build/fishing.wasm",
+        dataUrl: "Build/fishing.data.unityweb",
+        frameworkUrl: "Build/fishing.framework.js.unityweb",
+        codeUrl: "Build/fishing.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Catch Glory",
         productVersion: "1.0",
-        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
       });
     </script>
+    
+    <!-- Этот блок отвечает за интеграцию с Telegram -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
+      // Ждем, пока игра загрузится
       window.addEventListener('load', function() {
+        // Проверяем, что мы в Telegram
         if (window.Telegram && window.Telegram.WebApp) {
-          // Даем небольшую задержку (100 миллисекунд), чтобы iOS точно был готов
-          setTimeout(function() {
-            Telegram.WebApp.ready();
-            Telegram.WebApp.expand();
-          }, 100);
+          // Говорим, что все готово
+          Telegram.WebApp.ready();
+          // Расширяем на весь экран
+          Telegram.WebApp.expand();
+          // Красим хедер в цвет фона (самый надежный способ)
+          Telegram.WebApp.setHeaderColor('bg_color'); 
         }
       });
     </script>
