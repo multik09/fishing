@@ -1,49 +1,59 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <!-- 
-      Важно: Мы оставим базовый viewport здесь, но скрипт ниже его заменит 
-      на более продвинутый для мобильных устройств.
-    -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unity Web Player | Catch Glory</title>
-  </head>
-  <body style="text-align: center; padding: 0; border: 0; margin: 0;">
-    <canvas id="unity-canvas" width=1000 height=1000 tabindex="-1" style="width: 1000px; height: 1000px; background: #231F20"></canvas>
-    
-    <script src="Build/fishing.loader.js"></script>
-    
-    <script>
-      // Этот скрипт обнаруживает мобильные устройства
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        
-        // Удаляем старый viewport, если он есть
-        var oldMeta = document.querySelector('meta[name="viewport"]');
-        if (oldMeta) {
-          oldMeta.parentNode.removeChild(oldMeta);
-        }
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Fishing Fish</title>
 
-        // Создаем новый, правильный мета-тег для мобильных
-        var meta = document.createElement('meta');
-        meta.name = "viewport";
-        // Вот самая важная строчка с 'viewport-fit=cover'
-        meta.content = "width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
-        document.getElementsByTagName('head')[0].appendChild(meta);
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #231F20;
+    }
 
-        // Растягиваем canvas на весь экран
-        var canvas = document.querySelector("#unity-canvas");
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
-        canvas.style.position = "fixed";
+    #unity-canvas {
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 999;
+      background: #231F20;
+    }
+  </style>
+</head>
 
-        document.body.style.textAlign = "left";
+<body>
+  <canvas id="unity-canvas" tabindex="-1"></canvas>
+
+  <!-- Unity WebGL Loader -->
+  <script src="Build/fishing.loader.js"></script>
+
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <script>
+    // Передаём данные из Telegram в Unity
+    function sendTelegramDataToUnity() {
+      if (typeof unityInstance !== 'undefined' && Telegram && Telegram.WebApp) {
+        const initData = Telegram.WebApp.initData || "no initData";
+        unityInstance.SendMessage('TelegramManager', 'OnTelegramData', initData);
+      }
+    }
+
+    // Запуск Telegram WebApp API и Unity
+    window.addEventListener('load', () => {
+      if (window.Telegram && Telegram.WebApp) {
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
+        Telegram.WebApp.setHeaderColor('bg_color');
       }
 
-      // Этот блок запускает твою игру
       createUnityInstance(document.querySelector("#unity-canvas"), {
-        arguments: [],
         dataUrl: "Build/fishing.data.unityweb",
         frameworkUrl: "Build/fishing.framework.js.unityweb",
         codeUrl: "Build/fishing.wasm.unityweb",
@@ -51,24 +61,11 @@
         companyName: "DefaultCompany",
         productName: "Catch Glory",
         productVersion: "1.0",
+      }).then((instance) => {
+        unityInstance = instance;
+        sendTelegramDataToUnity(); // Данные из Telegram → Unity
       });
-    </script>
-    
-    <!-- Этот блок отвечает за интеграцию с Telegram -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-      // Ждем, пока игра загрузится
-      window.addEventListener('load', function() {
-        // Проверяем, что мы в Telegram
-        if (window.Telegram && window.Telegram.WebApp) {
-          // Говорим, что все готово
-          Telegram.WebApp.ready();
-          // Расширяем на весь экран
-          Telegram.WebApp.expand();
-          // Красим хедер в цвет фона (самый надежный способ)
-          Telegram.WebApp.setHeaderColor('bg_color'); 
-        }
-      });
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>
