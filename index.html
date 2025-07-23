@@ -1,59 +1,31 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Fishing Fish</title>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity Web Player | Catch Glory</title>
+  </head>
+  <body style="text-align: center; padding: 0; border: 0; margin: 0;">
+    <canvas id="unity-canvas" width=1000 height=1000 tabindex="-1" style="width: 1000px; height: 1000px; background: #231F20"></canvas>
+    <script src="Build/fishing.loader.js"></script>
+    <script>
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
 
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      background: #231F20;
-    }
+        var canvas = document.querySelector("#unity-canvas");
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
+        canvas.style.position = "fixed";
 
-    #unity-canvas {
-      width: 100vw;
-      height: 100vh;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 999;
-      background: #231F20;
-    }
-  </style>
-</head>
-
-<body>
-  <canvas id="unity-canvas" tabindex="-1"></canvas>
-
-  <!-- Unity WebGL Loader -->
-  <script src="Build/fishing.loader.js"></script>
-
-  <!-- Telegram WebApp SDK -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-  <script>
-    // Передаём данные из Telegram в Unity
-    function sendTelegramDataToUnity() {
-      if (typeof unityInstance !== 'undefined' && Telegram && Telegram.WebApp) {
-        const initData = Telegram.WebApp.initData || "no initData";
-        unityInstance.SendMessage('TelegramManager', 'OnTelegramData', initData);
-      }
-    }
-
-    // Запуск Telegram WebApp API и Unity
-    window.addEventListener('load', () => {
-      if (window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
-        Telegram.WebApp.setHeaderColor('bg_color');
+        document.body.style.textAlign = "left";
       }
 
       createUnityInstance(document.querySelector("#unity-canvas"), {
+        arguments: [],
         dataUrl: "Build/fishing.data.unityweb",
         frameworkUrl: "Build/fishing.framework.js.unityweb",
         codeUrl: "Build/fishing.wasm.unityweb",
@@ -61,11 +33,9 @@
         companyName: "DefaultCompany",
         productName: "Catch Glory",
         productVersion: "1.0",
-      }).then((instance) => {
-        unityInstance = instance;
-        sendTelegramDataToUnity(); // Данные из Telegram → Unity
+        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
