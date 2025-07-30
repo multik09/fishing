@@ -4,10 +4,22 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity Web Player | Catch Glory</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
     <canvas id="unity-canvas" width=1000 height=1000 tabindex="-1" style="width: 1000px; height: 1000px; background: #231F20"></canvas>
     <script src="Build/fishing.loader.js"></script>
+    <script>
+      window.addEventListener('load', function() {
+        if (window.Telegram && window.Telegram.WebApp) {
+          // Даем небольшую задержку (100 миллисекунд), чтобы iOS точно был готов
+          setTimeout(function() {
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand();
+          }, 100);
+        }
+      });
+    </script>
     <script>
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device style: fill the whole browser client area with the game canvas:
@@ -35,18 +47,6 @@
         productVersion: "1.0",
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
-      });
-    </script>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-      window.addEventListener('load', function() {
-        if (window.Telegram && window.Telegram.WebApp) {
-          // Даем небольшую задержку (100 миллисекунд), чтобы iOS точно был готов
-          setTimeout(function() {
-            Telegram.WebApp.ready();
-            Telegram.WebApp.expand();
-          }, 100);
-        }
       });
     </script>
   </body>
