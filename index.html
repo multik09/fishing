@@ -5,33 +5,34 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity Web Player | Catch Glory</title>
     
-    <!-- 
-      ### УЛЬТИМАТИВНАЯ ПОЛИТИКА БЕЗОПАСНОСТИ ДЛЯ UNITY + TELEGRAM ###
-      default-src 'self': Разрешает всё с твоего сайта по умолчанию.
-      script-src ...: Разрешает скрипты (включая inline, eval и от Telegram).
-      connect-src 'self': Разрешает загрузку файлов игры (.data, .wasm).
-      worker-src 'self' blob::  !!! КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: Разрешает Unity создавать "помощников" из blob.
-    -->
+    <!-- ИЗМЕНЕНИЕ №1: ПОЛНАЯ ПОЛИТИКА БЕЗОПАСНОСТИ -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org; connect-src 'self' blob:; worker-src 'self' blob:;">
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
   </head>
-  
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
-    <canvas id="unity-canvas" width=600 height=1278 tabindex="-1" style="width: 100%; height: 100%; position: fixed; background: #231F20"></canvas>
+    <canvas id="unity-canvas" width=600 height=1278 tabindex="-1" style="width: 600px; height: 1278px; background: #231F20"></canvas>
     
+    <!-- ИЗМЕНЕНИЕ №2: ПОДКЛЮЧАЕМ СКРИПТ TELEGRAM -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <script src="Build/fishing.loader.js"></script>
-    
     <script>
+      // Твой оригинальный код для мобильных, мы его не трогаем
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes, viewport-fit=cover';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+
         var canvas = document.querySelector("#unity-canvas");
         canvas.style.width = "100%";
         canvas.style.height = "100%";
         canvas.style.position = "fixed";
+
         document.body.style.textAlign = "left";
       }
 
+      // ИЗМЕНЕНИЕ №3: ОБОРАЧИВАЕМ ЗАПУСК UNITY И ДОБАВЛЯЕМ СВЯЗЬ
       createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],
         dataUrl: "Build/fishing.data.unityweb",
@@ -42,9 +43,12 @@
         productName: "Catch Glory",
         productVersion: "1.0",
       }).then((unityInstance) => {
+        // Сохраняем готовый экземпляр в глобальную переменную
         window.unityGame = unityInstance;
+        // Отправляем сигнал в Unity, что все готово
         unityInstance.SendMessage('GameManager', 'OnWebAppReady');
         
+        // Инициализируем Telegram Web App
         if (window.Telegram && window.Telegram.WebApp) {
             Telegram.WebApp.ready();
             Telegram.WebApp.expand();
