@@ -6,13 +6,13 @@
     <title>Unity Web Player | Catch Glory</title>
     
     <!-- 
-      ФИНАЛЬНАЯ ПОЛИТИКА БЕЗОПАСНОСТИ (CSP)
-      'self' - разрешает скрипты с этого же домена
-      'unsafe-eval' - НУЖНО для работы Unity WebAssembly
-      'unsafe-inline' - НУЖНО для запуска скрипта инициализации Unity в этом файле
-      https://telegram.org - НУЖНО для скрипта Telegram
+      ### УЛЬТИМАТИВНАЯ ПОЛИТИКА БЕЗОПАСНОСТИ ДЛЯ UNITY + TELEGRAM ###
+      default-src 'self': Разрешает всё с твоего сайта по умолчанию.
+      script-src ...: Разрешает скрипты (включая inline, eval и от Telegram).
+      connect-src 'self': Разрешает загрузку файлов игры (.data, .wasm).
+      worker-src 'self' blob::  !!! КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: Разрешает Unity создавать "помощников" из blob.
     -->
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' 'unsafe-inline' https://telegram.org;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org; connect-src 'self' blob:; worker-src 'self' blob:;">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   </head>
@@ -24,7 +24,6 @@
     <script src="Build/fishing.loader.js"></script>
     
     <script>
-      // Этот скрипт теперь будет разрешен благодаря 'unsafe-inline'
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         var canvas = document.querySelector("#unity-canvas");
         canvas.style.width = "100%";
