@@ -24,7 +24,7 @@
         document.body.style.textAlign = "left";
       }
 
-      window.unityInstance = createUnityInstance(document.querySelector("#unity-canvas"), {
+      createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],
         dataUrl: "Build/fishing.data.unityweb",
         frameworkUrl: "Build/fishing.framework.js.unityweb",
@@ -35,6 +35,10 @@
         productVersion: "1.0",
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+      }).then((unityInstance) => {
+    // Вот он, ключ к успеху!
+    // Мы сохраняем resolved instance в глобальную переменную.
+    window.unityGame = unityInstance;
       });
     </script>
   </body>
