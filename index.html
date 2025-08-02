@@ -4,27 +4,25 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity Web Player | Catch Glory</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script> <!-- Telegram API -->
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <style>
-      html, body {
+      body {
         margin: 0;
         padding: 0;
-        overflow: hidden;
-        background: #231F20;
-        text-align: center;
+        overflow: hidden; /* Убирает полосы прокрутки */
+        background-color: var(--tg-theme-bg-color, #231F20); /* Использует цвет темы Telegram */
       }
+      /* Убирает отступы у canvas, чтобы он занимал всё место */
       canvas {
-        width: 100%;
-        height: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
+        display: block;
       }
     </style>
-  </head>
-  <body>
-    <canvas id="unity-canvas" tabindex="-1"></canvas>
 
+  </head>
+  <body style="text-align: center; padding: 0; border: 0; margin: 0;">
+    <canvas id="unity-canvas" width=600 height=1278 tabindex="-1" style="width: 100vw; height: 100vh; background: #231F20"></canvas>
     <script src="Build/fishing.loader.js"></script>
     <script>
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
@@ -34,31 +32,15 @@
         document.getElementsByTagName('head')[0].appendChild(meta);
       }
 
-      let unityGame = null;
-
       createUnityInstance(document.querySelector("#unity-canvas"), {
+        arguments: [],
         dataUrl: "Build/fishing.data.unityweb",
         frameworkUrl: "Build/fishing.framework.js.unityweb",
         codeUrl: "Build/fishing.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Catch Glory",
-        productVersion: "1.0"
-      }).then((instance) => {
-        unityGame = instance;
-
-        console.log("Unity loaded, calling OnWebAppReady");
-
-        // Когда Telegram WebApp и Unity готовы — передаём сообщение в Unity
-        setTimeout(() => {
-          if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
-            Telegram.WebApp.ready(); // ⚠️ Обязательно
-          }
-
-          if (unityGame) {
-            unityGame.SendMessage("GameManager", "OnWebAppReady");
-          }
-        }, 500); // Небольшая задержка для стабильности
+        productVersion: "1.0",
       });
     </script>
   </body>
