@@ -4,45 +4,61 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity Web Player | Catch Glory</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://telegram.org; connect-src 'self' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline';">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script> <!-- Telegram API -->
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #231F20;
+        text-align: center;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+      }
+    </style>
   </head>
-  <body style="text-align: center; padding: 0; border: 0; margin: 0;">
-    <canvas id="unity-canvas" width=600 height=1278 tabindex="-1" style="width: 100%; height: 100%; position: fixed; background: #231F20"></canvas>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+
     <script src="Build/fishing.loader.js"></script>
     <script>
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        var meta = document.querySelector('meta[name="viewport"]');
-        if(!meta) {
-          meta = document.createElement('meta');
-          meta.name = 'viewport';
-          document.getElementsByTagName('head')[0].appendChild(meta);
-        }
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes, viewport-fit=cover';
-        var canvas = document.querySelector("#unity-canvas");
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
-        canvas.style.position = "fixed";
-        document.body.style.textAlign = "left";
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
       }
+
+      let unityGame = null;
+
       createUnityInstance(document.querySelector("#unity-canvas"), {
-        arguments: [],
         dataUrl: "Build/fishing.data.unityweb",
         frameworkUrl: "Build/fishing.framework.js.unityweb",
-        codeUrl: "Build/fishing.wasm.unityweb", // Убедись, что расширение правильное
+        codeUrl: "Build/fishing.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Catch Glory",
-        productVersion: "1.0",
-      }).then((unityInstance) => {
-        window.unityGame = unityInstance;
-        unityInstance.SendMessage('GameManager', 'OnWebAppReady');
-        if (window.Telegram && window.Telegram.WebApp) {
-            Telegram.WebApp.ready();
-            Telegram.WebApp.expand();
-            Telegram.WebApp.setHeaderColor('bg_color'); 
-        }
+        productVersion: "1.0"
+      }).then((instance) => {
+        unityGame = instance;
+
+        console.log("Unity loaded, calling OnWebAppReady");
+
+        // Когда Telegram WebApp и Unity готовы — передаём сообщение в Unity
+        setTimeout(() => {
+          if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+            Telegram.WebApp.ready(); // ⚠️ Обязательно
+          }
+
+          if (unityGame) {
+            unityGame.SendMessage("GameManager", "OnWebAppReady");
+          }
+        }, 500); // Небольшая задержка для стабильности
       });
     </script>
   </body>
